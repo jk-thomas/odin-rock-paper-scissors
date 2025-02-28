@@ -55,11 +55,11 @@ function gamePlay(playerChoice) {
 
 function updateUI(roundWinner) {
     if (roundWinner == 'player')
-        roundInfo.textContent = `${playerSelect} beats ${computerSelect}! Player wins round ${round}!`;
+        roundInfo.innerHTML = `${playerSelect} beats ${computerSelect}! <br>Player wins round ${round}!`;
     else if (roundWinner == 'computer')
-        roundInfo.textContent = `${computerSelect} beats ${playerSelect}! Computer wins round ${round}!`;
+        roundInfo.innerHTML = `${computerSelect} beats ${playerSelect}! <br>Computer wins round ${round}!`;
     else
-        roundInfo.textContent = `${playerSelect} equals ${computerSelect}! Tied round!`;
+        roundInfo.innerHTML = `${playerSelect} equals ${computerSelect}! <br>Tied round!`;
 
     playerScoreInfo.textContent = `Player: ${playerScore}`;
     computerScoreInfo.textContent = `Computer: ${computerScore}`;
@@ -145,11 +145,12 @@ function handleSelection(event) {
     rounds = event.target.value;
     if (rounds !== '') { // Ensure an option is selected
         event.target.disabled = true;  // Disable dropdown after selection
-        document.getElementById("rock").disabled = false;
-        document.getElementById("paper").disabled = false;
-        document.getElementById("scissor").disabled = false;
+        rockBtn.disabled = false;
+        paperBtn.disabled = false;
+        scissorBtn.disabled = false;
         console.log("rounds:", rounds); // Log selected value
         calcWin(rounds);
+        roundInfo.innerHTML = `Best of ${rounds}! First to ${winScore}!<br>Click a hand to start!`;
     }
 }
 

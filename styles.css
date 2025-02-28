@@ -3,6 +3,7 @@
     --background-primary: #2f4f4f;
     --background-secondary: #1f3434;
     --secondary-dark: #303030;
+    --secondary-light: #444444;
 }
 
 body {
@@ -32,6 +33,16 @@ header {
     border-radius: 5px;
     background-color: var(--secondary-dark);
     color: var(--primary-text)
+}
+
+.button:hover {
+    background-color: var(--secondary-light);
+    cursor: pointer;
+}
+
+button:disabled:hover {
+    background-color: var(--secondary-dark);
+    cursor: not-allowed;
 }
 
 .hand {
