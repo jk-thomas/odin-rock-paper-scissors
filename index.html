@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="styles.css" rel="stylesheet"></href>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Rock Paper Scissors</h1>
+    </header>
+    <h3 style="margin-bottom: 0;">Choose number of rounds: </h3>
+    <div class="dropdown" id="dropdown-container"></div>
+    <h2 id="round-result" style="margin-top: 32px;">Click hand to start!</h3>
+    <div class="button-container" style="margin-top: 16px;">
+        <button class="button hand" id="rock" disabled>✊</button>
+        <button class="button hand" id="paper" disabled>✋</button>
+        <button class="button hand" id="scissor" disabled>✌</button>
+    </div>
+    <h4 id="pscore" style="margin-top: 8px; margin-bottom: 0">Player: 0</h4>
+    <h4 id="cscore" style="margin-top: 0">Computer: 0</h4>
+
+    <h2 id="final-result" style="margin-top: 32px; margin-bottom: 0;"></h2>
+    <button class="button restart" id="restart">Restart</button>
+</body>
+</html>

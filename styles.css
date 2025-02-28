@@ -1,0 +1,48 @@
+:root {
+    --primary-text: #c8c8c8;
+    --background-primary: #2f4f4f;
+    --background-secondary: #1f3434;
+    --secondary-dark: #303030;
+}
+
+body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: var(--background-primary);
+    color: var(--primary-text);
+}
+
+header {
+    border-bottom: 1px solid var(--primary-text);
+}
+
+.dropdown select {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: medium;
+    background-color: var(--secondary-dark);
+    color: var(--primary-text);
+    border-radius: 5px;
+}
+
+.button-container {
+    display: flex;
+    gap: 8px;
+}
+
+.button {
+    border-radius: 5px;
+    background-color: var(--secondary-dark);
+    color: var(--primary-text)
+}
+
+.hand {
+    padding: 16px;
+    font-size: x-large;
+    height: 70px;
+    width: 65px;
+}
+
+.restart {
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 16px;
+    padding: 8px;
+}
