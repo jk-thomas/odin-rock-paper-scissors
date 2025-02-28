@@ -133,7 +133,7 @@ function createDropdown() {
     var sel = document.createElement("select");
     sel.appendChild(new Option('Select an option', '')); // Default placeholder
 
-    for (var i = 1; i <= 10; i++) {
+    for (var i = 1; i <= 11; i+=2) {
         sel.appendChild(new Option(i, i));
     }
 
