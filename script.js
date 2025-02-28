@@ -4,8 +4,6 @@ let playerSelect = '';
 let computerSelect = '';
 let roundWinner = '';
 
-// GAME
-
 function computerChoice() {
     let choice = Math.floor(Math.random() * 3);
     switch (choice) {
@@ -66,7 +64,7 @@ function updateUI(roundWinner) {
 }
 
 function gameOver() {
-    console.log(playerScore); console.log(computerScore); console.log(winScore);
+    // console.log(playerScore); console.log(computerScore); console.log(winScore);
     return (playerScore === winScore || computerScore === winScore);
 }
 
@@ -96,8 +94,6 @@ function restartGame() {
     }
 }
 
-// UI
-
 let round = 0;
 let rounds = 0;
 let winScore = 0;
@@ -123,15 +119,14 @@ scissorBtn.addEventListener('click', () => gamePlay('scissor'));
 restartBtn.addEventListener('click', () => restartGame());
 
 function calcWin(rounds) {
-    // winScore = Math.ceil(rounds/2 + 0.5);
     winScore = Math.floor(rounds/2) + 1;
-    console.log(`winScore: ${winScore}`);
+    //console.log(`winScore: ${winScore}`);
 }
 
 // Function to create and return a <select> element
 function createDropdown() {
     var sel = document.createElement("select");
-    sel.appendChild(new Option('Select an option', '')); // Default placeholder
+    sel.appendChild(new Option('Select an option', ''));
 
     for (var i = 1; i <= 11; i+=2) {
         sel.appendChild(new Option(i, i));
@@ -143,12 +138,12 @@ function createDropdown() {
 // Function to handle the dropdown selection
 function handleSelection(event) {
     rounds = event.target.value;
-    if (rounds !== '') { // Ensure an option is selected
-        event.target.disabled = true;  // Disable dropdown after selection
+    if (rounds !== '') { 
+        event.target.disabled = true;
         rockBtn.disabled = false;
         paperBtn.disabled = false;
         scissorBtn.disabled = false;
-        console.log("rounds:", rounds); // Log selected value
+        console.log("rounds:", rounds);
         calcWin(rounds);
         roundInfo.innerHTML = `Best of ${rounds}! First to ${winScore}!<br>Click a hand to start!`;
     }
@@ -156,7 +151,6 @@ function handleSelection(event) {
 
 // Function to initialize the dropdown and add event listeners
 function init() {
-    // var dropdownContainer = document.getElementById("dropdown-container");
     var dropdown = createDropdown();
     
     dropdown.addEventListener("change", handleSelection);
