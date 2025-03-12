@@ -1,160 +1,124 @@
-let playerScore = 0;
-let computerScore = 0;
-let playerSelect = '';
-let computerSelect = '';
-let roundWinner = '';
+//const socket = io("http://192.168.1.139:3000"); // Update with Pi's IP or hostname
+const socket = io("localhost:3000");
+let username = "";
+let opponent = "";
 
-function computerChoice() {
-    let choice = Math.floor(Math.random() * 3);
-    switch (choice) {
-        case 0:
-            return 'rock';
-        case 1:
-            return 'paper';
-        case 2:
-            return 'scissor';
+// Handle setting the username
+document.getElementById("usernameForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    username = document.getElementById("usernameInput").value;
+    socket.emit("setUsername", username);
+    document.getElementById("playerName").innerText = `${username}`;
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
+});
+
+// Update available players list
+socket.on("updatePlayers", (players) => {
+    let dropdown = document.getElementById("playersList");
+    dropdown.innerHTML = "";
+    players.forEach((player) => {
+        if (player !== username) {
+            let option = document.createElement("option");
+            option.value = player;
+            option.innerText = player;
+            dropdown.appendChild(option);
+        }
+        if (opponent && player != opponent) {
+            // CHECK IF OPPONENT LEFT/Joined diff game
+            document.getElementById("gameStatus").innerText = `${opponent} left...`;
+            document.getElementById("playersList").disabled = false;
+            document.getElementById("challengeButton").disabled = false;
+        }
+    });
+});
+
+// Handle challenging an opponent
+document.getElementById("challengeButton").addEventListener("click", () => {
+    opponent = document.getElementById("playersList").value;
+    socket.emit("challengePlayer", opponent);
+    // FIXED // FIX, NEED TO CONFIRM IF BOTH PLAYERS CHOOSE EACHOTHER BEFORE STARTING
+    // AFTER SELECT (WAITING FOR OPPONENT (REPLACE 'PLAYING AGAINST ...'))
+    // SEND CHALLENGE MESSAGE TO OPPONENT ([NAME] IS CHALLENGING YOU (REPLACE 'SELECT AN OPPONENT'))
+
+    document.getElementById("playersList").disabled = true;
+    document.getElementById("challengeButton").disabled = true;
+    document.getElementById("gameStatus").innerText = `Waiting for opponent...`;
+});
+
+let opponents = [];
+socket.on("challenger", (opponent) => {
+    opponents.push(opponent);
+    let opps = "Player(s) " + opponents.join(", ");
+    // for (opp in opponents)
+    //     document.getElementById("challengeOpp").innerText = `${opp}, `;
+    document.getElementById("selectOpp").innerText = `${opps} challenged you!`;
+})
+
+// Game starts
+socket.on("matchStart", (data) => {
+    document.getElementById("playersList").disabled = true;
+    document.getElementById("challengeButton").disabled = true;
+    opponents = [];
+    if (data.player1 === username || data.player2 === username) {
+        document.getElementById("gameStatus").innerText = `Playing against ${opponent}`;
+        document.getElementById("gameChoices").style.display = "flex";
+        document.getElementById("pscore").innerText = `${data.player1}: 0`;
+        document.getElementById("oscore").innerText = `${data.player2}: 0`;
+        // document.getElementById("forfeit").style.display = "flex";
     }
+});
 
+// Handle sending a move
+document.querySelectorAll(".choice").forEach((button) => {
+    button.addEventListener("click", () => {
+        const choice = button.getAttribute("data-choice");
+        disableButtons();
+        document.getElementById("gameResult").innerText = `Waiting for ${opponent}'s move...`;
+        socket.emit("playerMove", { playerName: username, opponentName: opponent, move: choice });
+    });
+});
+
+// Handle receiving game results
+socket.on("roundResult", ({ opMove, result, score }) => { // make sure moves is {name (not id) : choice}
+    // if 0 = 'tied', 1 = 'win', -1 = 'lose' // You 'insert' !
+    document.getElementById("gameResult").innerText = `${opponent} threw ${opMove}! You ${result}!`;
+    document.getElementById("pscore").innerText = `${username}: ${score[username]}`;
+    document.getElementById("oscore").innerText = `${opponent}: ${score[opponent]}`;
+    enableButtons();
+});
+
+function disableButtons() {
+    document.querySelectorAll(".choice").forEach((button) => {
+        button.disabled = true;
+    })
 }
 
-function playRound(playerSelect, computerSelect) {
-    if (playerSelect == computerSelect) {
-        roundWinner = 'tie';
-    } else if (
-        (playerSelect == 'rock' && computerSelect == 'scissor') ||
-        (playerSelect == 'paper' && computerSelect == 'rock') ||
-        (playerSelect == 'scissor' && computerSelect == 'paper')
-    ) {
-        playerScore++;
-        roundWinner = 'player';
-        round++;
-    } else if (
-        (computerSelect == 'rock' && playerSelect == 'scissor') ||
-        (computerSelect == 'paper' && playerSelect == 'rock') ||
-        (computerSelect == 'scissor' && playerSelect == 'paper')
-    ) {
-        computerScore++;
-        roundWinner = 'computer';
-        round++;
-    }
+function enableButtons() {
+    document.querySelectorAll(".choice").forEach((button) => {
+        button.disabled = false;
+    })
 }
 
-function gamePlay(playerChoice) {
-    playerSelect = playerChoice;
+document.getElementById("forfeit").addEventListener("click", () => {
 
-    computerSelect = computerChoice();
-    playRound(playerSelect, computerSelect);
-    updateUI(roundWinner);
+})
 
-    if (gameOver()) {
-        endGame();
-    }
+function forfeitGame() {
+
+    let button = document.getElementById("forfeit-rematch");
+    button.innerText = "Rematch";
+    button.onclick = rematchGame;
+    document.getElementById("leave").display = "block";
 }
 
-function updateUI(roundWinner) {
-    if (roundWinner == 'player')
-        roundInfo.innerHTML = `${playerSelect} beats ${computerSelect}! <br>Player wins round ${round}!`;
-    else if (roundWinner == 'computer')
-        roundInfo.innerHTML = `${computerSelect} beats ${playerSelect}! <br>Computer wins round ${round}!`;
-    else
-        roundInfo.innerHTML = `${playerSelect} equals ${computerSelect}! <br>Tied round!`;
-
-    playerScoreInfo.textContent = `Player: ${playerScore}`;
-    computerScoreInfo.textContent = `Computer: ${computerScore}`;
+function rematchGame() { //if click forfeit or end match
+    let button = document.getElementById("forfeit-rematch");
+    button.innerText = "Forfeit";
+    button.onclick = forfeitGame;
 }
 
-function gameOver() {
-    // console.log(playerScore); console.log(computerScore); console.log(winScore);
-    return (playerScore === winScore || computerScore === winScore);
-}
-
-function endGame() {
-    rockBtn.disabled = true;
-    paperBtn.disabled = true;
-    scissorBtn.disabled = true;
-
-    if (playerScore > computerScore)
-        resultInfo.textContent = "PLAYER WINS!";
-    else
-        resultInfo.textContent = "COMPUTER WINS...";
-}
-
-function restartGame() {
-    playerScore = 0;
-    computerScore = 0;
-    round = 0;
-    roundInfo.textContent = "Click hand to start!";
-    playerScoreInfo.textContent = "Player: 0";
-    computerScoreInfo.textContent = "Computer: 0";
-    resultInfo.textContent = "";
-    let dropdown = document.getElementById("dropdown-container").querySelector("select");
-    if (dropdown) {
-        dropdown.disabled = false;
-        dropdown.value = ''; 
-    }
-}
-
-let round = 0;
-let rounds = 0;
-let winScore = 0;
-let rock = '✊';
-let paper = '✋';
-let scissor = '✌';
-
-const dropdownContainer = document.getElementById("dropdown-container");
-
-const rockBtn = document.getElementById("rock");
-const paperBtn = document.getElementById("paper");
-const scissorBtn = document.getElementById("scissor");
-const restartBtn = document.getElementById("restart");
-
-const roundInfo = document.getElementById("round-result");
-const playerScoreInfo = document.getElementById("pscore");
-const computerScoreInfo = document.getElementById("cscore");
-const resultInfo = document.getElementById("final-result");
-
-rockBtn.addEventListener('click', () => gamePlay('rock'));
-paperBtn.addEventListener('click', () => gamePlay('paper'));
-scissorBtn.addEventListener('click', () => gamePlay('scissor'));
-restartBtn.addEventListener('click', () => restartGame());
-
-function calcWin(rounds) {
-    winScore = Math.floor(rounds/2) + 1;
-    //console.log(`winScore: ${winScore}`);
-}
-
-// Function to create and return a <select> element
-function createDropdown() {
-    var sel = document.createElement("select");
-    sel.appendChild(new Option('Select an option', ''));
-
-    for (var i = 1; i <= 11; i+=2) {
-        sel.appendChild(new Option(i, i));
-    }
-
-    return sel;
-}
-
-// Function to handle the dropdown selection
-function handleSelection(event) {
-    rounds = event.target.value;
-    if (rounds !== '') { 
-        event.target.disabled = true;
-        rockBtn.disabled = false;
-        paperBtn.disabled = false;
-        scissorBtn.disabled = false;
-        console.log("rounds:", rounds);
-        calcWin(rounds);
-        roundInfo.innerHTML = `Best of ${rounds}! First to ${winScore}!<br>Click a hand to start!`;
-    }
-}
-
-// Function to initialize the dropdown and add event listeners
-function init() {
-    var dropdown = createDropdown();
-    
-    dropdown.addEventListener("change", handleSelection);
-    dropdownContainer.appendChild(dropdown);
-}
-
-init();
+// click forfeit, determine winner, higher score or person who did not click forfeit
+// click forfeit/end of round: forfeit becomes rematch, leave button appears
+// if rematch, reset score, change button back to forfeit, hide leave
+// if leave, disband room, put both in availablePlayers, hide ui, enable list and challenge

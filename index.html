@@ -3,26 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="styles.css" rel="stylesheet"></href>
-    <script src="script.js" defer></script>
+    <title>Multiplayer Rock Paper Scissors</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="/socket.io/socket.io.js"></script>
+    <script defer src="script.js"></script>
 </head>
 <body>
     <header>
         <h1>Rock Paper Scissors</h1>
     </header>
-    <h3 style="margin-bottom: 0;">Choose number of rounds: </h3>
-    <div class="dropdown" id="dropdown-container"></div>
-    <h2 id="round-result" style="margin-top: 32px;">Click a hand to start!</h3>
-    <div class="button-container" style="margin-top: 16px;">
-        <button class="button hand" id="rock" disabled>✊</button>
-        <button class="button hand" id="paper" disabled>✋</button>
-        <button class="button hand" id="scissor" disabled>✌</button>
-    </div>
-    <h4 id="pscore" style="margin-top: 8px; margin-bottom: 0">Player: 0</h4>
-    <h4 id="cscore" style="margin-top: 0">Computer: 0</h4>
 
-    <h2 id="final-result" style="margin-top: 32px; margin-bottom: 0;"></h2>
-    <button class="button restart" id="restart">Restart</button>
+    <div id="loginScreen">
+        <h2>Enter Username</h2>
+        <form id="usernameForm">
+            <input type="text" class="input" id="usernameInput" required>
+            <button class="button join" type="submit">Join</button>
+        </form>
+    </div>
+
+    <div id="gameScreen" style="display:none;">
+        <h2>Welcome, <span id="playerName"></span>!</h2>
+        <h3 id="selectOpp" style="margin-bottom: 5px;">Select an Opponent</h3>
+        <select class="dropdown" id="playersList"></select>
+        <button class="button" id="challengeButton">Challenge</button>
+
+        <h3 id="gameStatus"></h3>
+
+        <div id="gameChoices" class="button-container" style="margin-top: 16px; display:none">
+            <button class="button hand choice" data-choice="rock" id="rock">✊</button>
+            <button class="button hand choice" data-choice="paper" id="paper">✋</button>
+            <button class="button hand choice" data-choice="scissor" id="scissor">✌</button>
+        </div>
+
+        <div id="gameScores">
+            <h4 id="pscore" style="margin-top: 8px; margin-bottom: 0"></h4>
+            <h4 id="oscore" style="margin-top: 0"></h4>
+        </div>
+
+        <h2 id="gameResult">Select a hand</h2>
+
+        <button class="button" id="forfeit-rematch" style="display:none" onclick="forfeitGame()">Forfeit</button>
+        <button class="button" id="leave" style="display:none">Leave</button>
+    </div>
+
 </body>
 </html>
