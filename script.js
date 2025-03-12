@@ -1,4 +1,3 @@
-//const socket = io("http://192.168.1.139:3000"); // Update with Pi's IP or hostname
 const socket = io("localhost:3000");
 let username = "";
 let opponent = "";
