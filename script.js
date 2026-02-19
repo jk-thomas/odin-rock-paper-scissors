@@ -1,4 +1,4 @@
-const socket = io("localhost:3000");
+const socket = io("localhost:3000"); //process.env.LOCAL_SOCKET_URL (didn't work)
 let username = "";
 let opponent = "";
 
@@ -64,6 +64,7 @@ socket.on("matchStart", (data) => {
         document.getElementById("gameChoices").style.display = "flex";
         document.getElementById("pscore").innerText = `${data.player1}: 0`;
         document.getElementById("oscore").innerText = `${data.player2}: 0`;
+        document.getElementById("gameResult").innerText = "Select a hand";
         // document.getElementById("forfeit").style.display = "flex";
     }
 });
@@ -117,7 +118,7 @@ function rematchGame() { //if click forfeit or end match
     button.onclick = forfeitGame;
 }
 
-// click forfeit, determine winner, higher score or person who did not click forfeit
+// click forfeit, determine winner, higher score/rounds won or person who did not click forfeit
 // click forfeit/end of round: forfeit becomes rematch, leave button appears
 // if rematch, reset score, change button back to forfeit, hide leave
-// if leave, disband room, put both in availablePlayers, hide ui, enable list and challenge
+// if leave, disband room, put both in availablePlayers, hide ui, enable dropdown and challenge

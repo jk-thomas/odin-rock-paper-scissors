@@ -157,7 +157,7 @@ function getGameIdByName(player1, player2) {
 }
 
 function computerChoice(room) {
-    let moves = [ 'rock', 'paper', 'scissor' ];
+    let moves = [ 'rock', 'paper', 'scissors' ];
     let choice = moves[Math.floor(Math.random() * moves.length)];
     room.moves['Computer'] = choice;
 }
